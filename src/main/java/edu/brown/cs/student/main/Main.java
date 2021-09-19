@@ -121,20 +121,40 @@ public final class Main {
   }
 
   private void findNeighbors(int k, double x, double y, double z, ArrayList<String[]> allData) {
-    // TODO: order ID printing, remove the star itself from closest list
     Hashtable<Double, Integer> stars = new Hashtable<>();
     for (int i = 0; i < k; i++) {
-      stars.put(distanceTo(x, y, z, allData.get(i)), Integer.parseInt(allData.get(i)[0]));
-    }
-    for (int i = k; i < allData.size(); i++) {
-      double currDistance = distanceTo(x, y, z, allData.get(i));
-      double maxInHash = Collections.max(stars.keySet());
-      if (currDistance < maxInHash) {
-        stars.remove(maxInHash);
-        stars.put(currDistance, Integer.parseInt(allData.get(i)[0]));
+      if (!sameStar(x, y, z, allData.get(i))) {
+        stars.put(distanceTo(x, y, z, allData.get(i)), Integer.parseInt(allData.get(i)[0]));
+      } else {
+        k++;
+        // if looking at the star we're looking for distances from, don't add that star to list
+        // and instead increment k (can only ever happen once) so that the right number of entries
+        // get put into the Hashtable
       }
     }
+    for (int i = k; i < allData.size(); i++) {
+      if (!sameStar(x, y, z, allData.get(i))) {
+        double currDistance = distanceTo(x, y, z, allData.get(i));
+        double maxInHash = Collections.max(stars.keySet());
+        if (currDistance < maxInHash) {
+          stars.remove(maxInHash);
+          stars.put(currDistance, Integer.parseInt(allData.get(i)[0]));
+        } else if (currDistance == maxInHash) {
+          // note: I don't think this implementation is as random as desired from specification
+          final double HALF_PROBABILITY = 0.5; // is this not proper patter for finals?
+          if (Math.random() > HALF_PROBABILITY) {
+            stars.remove(maxInHash);
+            stars.put(currDistance, Integer.parseInt(allData.get(i)[0]));
+          }
+        }
+      }
+    }
+    ArrayList<Integer> sortedStars = new ArrayList<>();
     for (Integer id : stars.values()) {
+      sortedStars.add(id);
+    }
+    Collections.sort(sortedStars);
+    for (Integer id : sortedStars) {
       System.out.println(id);
     }
   }
@@ -143,6 +163,11 @@ public final class Main {
     return Math.sqrt(Math.pow(Double.parseDouble(star2[2]) - x, 2)
         + Math.pow(Double.parseDouble(star2[3]) - y, 2)
         + Math.pow(Double.parseDouble(star2[4]) - z, 2));
+  }
+
+  private boolean sameStar(double x, double y, double z, String[] star2) {
+    return (x == Double.parseDouble(star2[2]) && y == Double.parseDouble(star2[3])
+        && z == Double.parseDouble(star2[4]));
   }
 
   private static FreeMarkerEngine createEngine() {
