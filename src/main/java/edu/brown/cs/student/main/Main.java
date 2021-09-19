@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -85,11 +87,11 @@ public final class Main {
             }
             System.out.println("Read " + starData.size() + " stars from " + arguments[1]);
           } else if (arguments[0].equals("naive_neighbors")) {
-            double k, x, y, z;
-            k = Double.parseDouble(arguments[1]);
+            double x, y, z;
+            int k = Integer.parseInt(arguments[1]);
             if (arguments[2].substring(0, 1).equals("\"")) {
               int index  = 0;
-              while (!("\"" + starData.get(index)[1] + "\"").equals(arguments[1])) {
+              while (!("\"" + starData.get(index)[1] + "\"").equals(arguments[2])) {
                 index++;
               }
               x = Double.parseDouble(starData.get(index)[2]);
@@ -100,7 +102,9 @@ public final class Main {
               y = Double.parseDouble(arguments[3]);
               z = Double.parseDouble(arguments[4]);
             }
-            findNeighbors(k, x, y, z);
+            if (k != 0) {
+              findNeighbors(k, x, y, z, starData);
+            }
           } else {
             System.out.println(arguments[0]);
           }
@@ -116,8 +120,29 @@ public final class Main {
 
   }
 
-  private void findNeighbors(Double k, Double x, Double y, Double z) {
+  private void findNeighbors(int k, double x, double y, double z, ArrayList<String[]> allData) {
+    // TODO: order ID printing, remove the star itself from closest list
+    Hashtable<Double, Integer> stars = new Hashtable<>();
+    for (int i = 0; i < k; i++) {
+      stars.put(distanceTo(x, y, z, allData.get(i)), Integer.parseInt(allData.get(i)[0]));
+    }
+    for (int i = k; i < allData.size(); i++) {
+      double currDistance = distanceTo(x, y, z, allData.get(i));
+      double maxInHash = Collections.max(stars.keySet());
+      if (currDistance < maxInHash) {
+        stars.remove(maxInHash);
+        stars.put(currDistance, Integer.parseInt(allData.get(i)[0]));
+      }
+    }
+    for (Integer id : stars.values()) {
+      System.out.println(id);
+    }
+  }
 
+  private double distanceTo(double x, double y, double z, String[] star2) {
+    return Math.sqrt(Math.pow(Double.parseDouble(star2[2]) - x, 2)
+        + Math.pow(Double.parseDouble(star2[3]) - y, 2)
+        + Math.pow(Double.parseDouble(star2[4]) - z, 2));
   }
 
   private static FreeMarkerEngine createEngine() {
