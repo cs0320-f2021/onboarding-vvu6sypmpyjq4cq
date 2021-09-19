@@ -2,10 +2,12 @@ package edu.brown.cs.student.main;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -62,6 +64,7 @@ public final class Main {
 
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       String input;
+      ArrayList<String[]> starData = new ArrayList<>();
       while ((input = br.readLine()) != null) {
         try {
           input = input.trim();
@@ -72,6 +75,16 @@ public final class Main {
           } else if (arguments[0].equals("subtract")) {
             double difference = Double.parseDouble(arguments[1]) - Double.parseDouble(arguments[2]);
             System.out.println(difference);
+          } else if (arguments[0].equals("stars")) {
+            starData = new ArrayList<>();
+            BufferedReader br2 = new BufferedReader(new FileReader("" + arguments[1]));
+            br2.readLine();
+            String line;
+            while ((line = br2.readLine()) != null) {
+              starData.add(line.split(","));
+            }
+          } else if (arguments[0].equals("naive_neighbors")) {
+            // TODO: implement k-nearest algo
           } else {
             System.out.println(arguments[0]);
           }
