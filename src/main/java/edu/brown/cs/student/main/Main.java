@@ -83,8 +83,24 @@ public final class Main {
             while ((line = br2.readLine()) != null) {
               starData.add(line.split(","));
             }
+            System.out.println("Read " + starData.size() + " stars from " + arguments[1]);
           } else if (arguments[0].equals("naive_neighbors")) {
-            // TODO: implement k-nearest algo
+            double k, x, y, z;
+            k = Double.parseDouble(arguments[1]);
+            if (arguments[2].substring(0, 1).equals("\"")) {
+              int index  = 0;
+              while (!("\"" + starData.get(index)[1] + "\"").equals(arguments[1])) {
+                index++;
+              }
+              x = Double.parseDouble(starData.get(index)[2]);
+              y = Double.parseDouble(starData.get(index)[3]);
+              z = Double.parseDouble(starData.get(index)[4]);
+            } else {
+              x = Double.parseDouble(arguments[2]);
+              y = Double.parseDouble(arguments[3]);
+              z = Double.parseDouble(arguments[4]);
+            }
+            findNeighbors(k, x, y, z);
           } else {
             System.out.println(arguments[0]);
           }
@@ -97,6 +113,10 @@ public final class Main {
       e.printStackTrace();
       System.out.println("ERROR: Invalid input for REPL");
     }
+
+  }
+
+  private void findNeighbors(Double k, Double x, Double y, Double z) {
 
   }
 
