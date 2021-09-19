@@ -30,9 +30,4 @@ location may not be perfectly random
 - error handling not fully complete
 
 Tests:
-<<<<<<< HEAD
 - base testing suite
->>>>>>> 2851c70... docs: filled out README
-=======
-- base testing suite
->>>>>>> 2851c70... docs: filled out README
